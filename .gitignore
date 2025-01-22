@@ -1,0 +1,13 @@
+# Visual Studio files and folders to ignore
+.vs/
+*.user
+*.suo
+*.vcxproj.user
+*.vcxproj.filters
+
+# Build output
+bin/
+obj/
+
+# Other unnecessary files
+*.log
