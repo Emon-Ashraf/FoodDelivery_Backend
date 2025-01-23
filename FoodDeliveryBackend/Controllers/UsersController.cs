@@ -55,6 +55,14 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
+        // POST /api/account/logout
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            _userService.LogoutAsync();
+            return Ok(new { message = "Logged out successfully" });
+        }
+
         // GET /api/account/profile
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
@@ -68,6 +76,22 @@ namespace FoodDeliveryBackend.Controllers
             catch (Exception ex)
             {
                 return Unauthorized(new { message = ex.Message });
+            }
+        }
+
+        // PUT /api/account/profile
+        [HttpPut("profile")]
+        public async Task<IActionResult> EditProfile([FromBody] UserEditModel model)
+        {
+            try
+            {
+                var userId = GetUserIdFromToken();
+                await _userService.EditUserProfileAsync(userId, model);
+                return Ok(new { message = "Profile updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
 

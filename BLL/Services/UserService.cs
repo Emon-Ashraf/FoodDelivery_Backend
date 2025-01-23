@@ -62,8 +62,6 @@ namespace BLL.Services
             return GenerateJwtToken(user);
         }
 
-
-
         public Task LogoutAsync()
         {
             return Task.CompletedTask;
@@ -86,24 +84,20 @@ namespace BLL.Services
             };
         }
 
-        public async Task<UserDto> GetUserProfileAsync(Guid userId)
+        public async Task EditUserProfileAsync(Guid userId, UserEditModel model)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null) throw new Exception("User not found");
 
-            return new UserDto
-            {
-                Id = user.Id,
-                FullName = user.FullName,
-                BirthDate = user.BirthDate,
-                Gender = user.Gender,
-                Address = user.Address,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
-            };
+            user.FullName = model.FullName;
+            user.BirthDate = model.BirthDate;
+            user.Gender = model.Gender;
+            user.Address = model.Address;
+            user.PhoneNumber = model.PhoneNumber;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
-
-
 
         private string GenerateJwtToken(User user)
         {
