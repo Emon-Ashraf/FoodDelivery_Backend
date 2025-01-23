@@ -7,5 +7,6 @@ namespace BLL.Interfaces
     public interface IUserService
     {
         Task<string> RegisterUserAsync(UserRegisterModel model);
+        Task<string> LoginAsync(LoginCredentials credentials);
     }
 }

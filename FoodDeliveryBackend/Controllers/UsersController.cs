@@ -34,7 +34,27 @@ namespace FoodDeliveryBackend.Controllers
             return Ok(new { token });
         }
 
-       
+        // POST /api/account/login
+        [HttpPost("login")]
+        [AllowAnonymous] // Allow unauthenticated users to log in
+        public async Task<IActionResult> Login([FromBody] LoginCredentials credentials)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid login credentials" });
+            }
+
+            try
+            {
+                var token = await _userService.LoginAsync(credentials);
+                return Ok(new { token });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+        }
+
 
         // Helper method to extract userId from JWT token
         private Guid GetUserIdFromToken()

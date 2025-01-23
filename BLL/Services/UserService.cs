@@ -53,7 +53,16 @@ namespace BLL.Services
             return GenerateJwtToken(user);
         }
 
-        
+        public async Task<string> LoginAsync(LoginCredentials credentials)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == credentials.Email);
+            if (user == null || user.Password != credentials.Password)
+                throw new UnauthorizedAccessException("Invalid credentials");
+
+            return GenerateJwtToken(user);
+        }
+
+
 
         public Task LogoutAsync()
         {
