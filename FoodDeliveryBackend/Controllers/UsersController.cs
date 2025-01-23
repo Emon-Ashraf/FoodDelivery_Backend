@@ -55,6 +55,21 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
+        // GET /api/account/profile
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            try
+            {
+                var userId = GetUserIdFromToken();
+                var profile = await _userService.GetUserProfileAsync(userId);
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+        }
 
         // Helper method to extract userId from JWT token
         private Guid GetUserIdFromToken()

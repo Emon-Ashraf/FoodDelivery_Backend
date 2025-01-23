@@ -8,5 +8,6 @@ namespace BLL.Interfaces
     {
         Task<string> RegisterUserAsync(UserRegisterModel model);
         Task<string> LoginAsync(LoginCredentials credentials);
+        Task<UserDto> GetUserProfileAsync(Guid userId);
     }
 }

@@ -86,7 +86,24 @@ namespace BLL.Services
             };
         }
 
-        
+        public async Task<UserDto> GetUserProfileAsync(Guid userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) throw new Exception("User not found");
+
+            return new UserDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                BirthDate = user.BirthDate,
+                Gender = user.Gender,
+                Address = user.Address,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
+            };
+        }
+
+
 
         private string GenerateJwtToken(User user)
         {
