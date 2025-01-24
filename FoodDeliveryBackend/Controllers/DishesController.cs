@@ -15,12 +15,10 @@ namespace FoodDeliveryBackend.Controllers
     public class DishesController : ControllerBase
     {
         private readonly IDishService _dishService;
-        private readonly IRatingService _ratingService;
 
-        public DishesController(IDishService dishService, IRatingService ratingService)
+        public DishesController(IDishService dishService)
         {
             _dishService = dishService;
-            _ratingService = ratingService;
         }
 
         [HttpGet]
@@ -38,59 +36,5 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetDishById(Guid id)
-        {
-            try
-            {
-                var result = await _dishService.GetDishByIdAsync(id);
-                return result != null ? Ok(result) : NotFound(new { status = "Error", message = "Dish not found." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { status = "Error", message = "An error occurred while fetching the dish.", details = ex.Message });
-            }
-        }
-
-        [HttpGet("{id}/rating/check")]
-        public async Task<IActionResult> CanUserRateDish(Guid id)
-        {
-            try
-            {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null)
-                    return Unauthorized(new { status = "Error", message = "User not authorized." });
-
-                var userId = Guid.Parse(userIdClaim);
-                var canRate = await _ratingService.CanUserRateDishAsync(userId, id);
-                return Ok(canRate);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { status = "Error", message = "An error occurred while checking rating eligibility.", details = ex.Message });
-            }
-        }
-
-        [HttpPost("{id}/rating")]
-        public async Task<IActionResult> SetDishRating(Guid id, [FromQuery] int ratingScore)
-        {
-            try
-            {
-                if (ratingScore < 0 || ratingScore > 10)
-                    return BadRequest(new { status = "Error", message = "Rating score must be between 0 and 10." });
-
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null)
-                    return Unauthorized(new { status = "Error", message = "User not authorized." });
-
-                var userId = Guid.Parse(userIdClaim);
-                await _ratingService.SetRatingAsync(userId, id, ratingScore);
-                return Ok(new { status = "Success", message = "Rating submitted successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { status = "Error", message = "An error occurred while submitting the rating.", details = ex.Message });
-            }
-        }
     }
 }
