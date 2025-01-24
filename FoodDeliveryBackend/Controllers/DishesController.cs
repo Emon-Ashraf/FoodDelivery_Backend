@@ -36,5 +36,18 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDishById(Guid id)
+        {
+            try
+            {
+                var result = await _dishService.GetDishByIdAsync(id);
+                return result != null ? Ok(result) : NotFound(new { status = "Error", message = "Dish not found." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "Error", message = "An error occurred while fetching the dish.", details = ex.Message });
+            }
+        }
     }
 }
