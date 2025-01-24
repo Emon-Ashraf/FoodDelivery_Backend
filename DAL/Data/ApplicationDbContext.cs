@@ -8,5 +8,6 @@ namespace DAL.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Dish> Dishes { get; set; }
     }
 }
