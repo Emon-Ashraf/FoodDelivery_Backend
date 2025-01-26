@@ -9,5 +9,7 @@ namespace DAL.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Dish> Dishes { get; set; }
+
+        public DbSet<BasketItem> BasketItems { get; set; }
     }
 }
