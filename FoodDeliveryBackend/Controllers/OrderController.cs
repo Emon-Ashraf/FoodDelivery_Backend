@@ -44,6 +44,34 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(Guid id)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { status = "Error", message = "User not authorized." });
+                }
+
+                var userId = Guid.Parse(userIdClaim);
+                var order = await _orderService.GetOrderByIdAsync(userId, id);
+
+                if (order == null)
+                {
+                    return NotFound(new { status = "Error", message = "Order not found." });
+                }
+
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "Error", message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+
 
 
         [HttpPost]
