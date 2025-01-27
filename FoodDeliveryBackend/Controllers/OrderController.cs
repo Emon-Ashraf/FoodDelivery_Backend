@@ -71,9 +71,6 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
-
-
-
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto orderCreateDto)
         {
@@ -102,5 +99,26 @@ namespace FoodDeliveryBackend.Controllers
             }
         }
 
+        [HttpPost("{id}/status")]
+        public async Task<IActionResult> ConfirmOrderDelivery(Guid id)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { status = "Error", message = "User not authorized." });
+                }
+
+                var userId = Guid.Parse(userIdClaim);
+                await _orderService.ConfirmOrderDeliveryAsync(userId, id);
+
+                return Ok(new { status = "Success", message = "Order delivery confirmed." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "Error", message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
     }
 }
