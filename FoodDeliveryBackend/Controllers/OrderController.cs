@@ -22,7 +22,29 @@ namespace FoodDeliveryBackend.Controllers
             _basketService = basketService;
         }
 
-       
+        [HttpGet]
+        public async Task<IActionResult> GetOrders()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { status = "Error", message = "User not authorized." });
+                }
+
+                var userId = Guid.Parse(userIdClaim);
+                var orders = await _orderService.GetOrdersAsync(userId);
+
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "Error", message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto orderCreateDto)
